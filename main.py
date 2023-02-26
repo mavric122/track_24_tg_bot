@@ -2,6 +2,7 @@ import logging
 import asyncio
 from aiogram import Bot, Dispatcher, types
 import aiohttp
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from bs4 import BeautifulSoup
 import datetime
 
@@ -46,6 +47,12 @@ async def get_exchange_track():
 # регистрируем обработчик команды старта
 @dp.message_handler(commands=['start'])
 async def start_handler(message: types.Message):
+    button1 = InlineKeyboardButton(text='Кнопка 1', callback_data='button1')
+    button2 = InlineKeyboardButton(text='Кнопка 2', callback_data='button2')
+    # Создание разметки с кнопками
+    markup = InlineKeyboardMarkup().add(button1, button2)
+    # Отправка сообщения с разметкой
+    await bot.send_message(chat_id=message.chat.id, text='Выберите действие:', reply_markup=markup)
     async with aiohttp.ClientSession() as session:
         rate = await get_exchange_track()
 
@@ -92,7 +99,5 @@ async def where_track(message: types.Message):
 # запускаем лонг поллинг
 if __name__ == '__main__':
     from aiogram import executor
-
-    # fddf
 
     executor.start_polling(dp, on_startup=on_startup, on_shutdown=on_shutdown)
